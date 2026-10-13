@@ -1,0 +1,20 @@
+<?php
+/**
+ * Database connection — CSF Integrated System
+ *
+ * Using mysqli with explicit charset to prevent charset-based
+ * SQL injection. Credentials should be moved to environment
+ * variables in production.
+ */
+$conn = new mysqli("localhost", "root", "", "csf_db");
+
+if ($conn->connect_error) {
+    // Log the real error server-side; never expose it to the client.
+    error_log("DB connection failed: " . $conn->connect_error);
+    http_response_code(503);
+    echo json_encode(["success" => false, "message" => "Database unavailable."]);
+    exit();
+}
+
+// Explicit UTF-8 charset prevents charset-based injection attacks.
+$conn->set_charset("utf8mb4");

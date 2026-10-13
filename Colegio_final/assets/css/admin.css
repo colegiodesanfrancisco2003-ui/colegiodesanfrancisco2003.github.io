@@ -1,0 +1,1924 @@
+/* ══════════════════════════════════════════════════════════════
+   CSF Integrated System — admin.css
+   Shared by Administrator, Clinic Staff, and Guidance Staff pages.
+   Identity: maroon + cream + gold. DM Sans (sans-serif) everywhere.
+   Section order: tokens → shell (sidebar/header) → responsive →
+   dropdowns/notifications → dashboard → cards/buttons → tables →
+   modals/forms → page-level components → print.
+   ══════════════════════════════════════════════════════════════ */
+
+:root{
+  --maroon:#7b1c2e;
+  --maroon-d:#5a1220;
+  --maroon-l:#a32540;
+  --gold:#c8902a;
+  --gold-l:#e8b84b;
+  --gold-d:#8a5f12;          /* gold dark enough for text on white/cream */
+  --cream:#fdf8f0;
+  --warm:#f5ede0;
+  --text:#1f1610;
+  --muted:#6b5a4e;
+  --white:#fff;
+  --border:#f0e6da;
+  --line:#ebdfd0;            /* default hairline (cards, tables, dividers) */
+  --line-strong:#d9c9b8;     /* form controls and outlined buttons */
+  --ok:#23694a;
+  --info:#24507a;
+  --danger:#a32526;
+  --shadow:0 1px 2px rgba(60,24,24,.06), 0 6px 20px rgba(60,24,24,.06);
+  --shadow-sm:0 1px 2px rgba(60,24,24,.07);
+  --shadow-lg:0 12px 36px rgba(60,24,24,.16);
+  --radius:12px;
+  --sidebar:260px;
+  --font-ui:'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display:var(--font-ui);  /* sans-serif only (DM Sans) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible keyboard focus on every interactive element — mouse users see
+   nothing extra, keyboard users always get a clear ring. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+.nav-item:focus-visible,
+.btn-sm:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-ui);background:var(--cream);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;line-height:1.5;-webkit-font-smoothing:antialiased;}
+input,select,textarea,button{font-family:inherit;}
+
+/* ── SIDEBAR ── */
+#sidebar{width:var(--sidebar);background:var(--maroon-d);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;height:100dvh;z-index:100;}
+.brand{display:flex;align-items:center;gap:10px;padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.1);}
+.brand-logo{width:44px;height:44px;flex:0 0 44px;border-radius:50%;object-fit:cover;background:#e3d9b6;}
+.brand-text{min-width:0;}
+.brand h1{font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--gold-l);line-height:1.25;}
+.brand p{font-size:.78rem;color:rgba(255,255,255,.68);margin-top:4px;}
+nav{flex:1;overflow-y:auto;padding:8px 0 16px;}
+nav::-webkit-scrollbar{width:4px;}
+nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+.nav-section{padding:14px 22px 5px;font-size:.76rem;font-weight:600;color:rgba(232,184,75,.85);}
+.nav-item{display:flex;align-items:center;gap:12px;padding:8px 20px 8px 17px;cursor:pointer;color:rgba(255,255,255,.8);font-size:.87rem;font-weight:400;border-left:3px solid transparent;transition:background .15s ease, color .15s ease;}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+.nav-item.active{background:rgba(232,184,75,.14);color:var(--gold-l);border-left-color:var(--gold);}
+.nav-item:focus-visible{outline-offset:-3px;outline-color:var(--gold-l);}
+.nav-item .icon{display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem;width:20px;flex-shrink:0;line-height:1;}
+/* About Us is pinned to the bottom of the sidebar, above the version footer. */
+.nav-pinned{border-top:1px solid rgba(255,255,255,.1);padding:8px 0;}
+
+/* ── MAIN ── */
+/* min-width:0 lets #main shrink below its content's minimum width so a
+   wide table scrolls inside its own .table-wrap instead of stretching the
+   whole page sideways (previously the cause of horizontal overflow on phones). */
+#main{margin-left:var(--sidebar);flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh;}
+header{background:var(--white);border-bottom:1px solid var(--line);padding:12px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50;}
+.header-title{font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--maroon);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--warm);border:1px solid var(--line);border-radius:999px;padding:3px 14px 3px 3px;cursor:pointer;transition:background .15s ease;}
+.user-pill:hover{background:#efe3d2;}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--maroon);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--gold-l);font-weight:700;flex-shrink:0;}
+.user-pill span{font-size:.84rem;font-weight:500;}
+
+/* Sidebar toggle (hamburger) — hidden on desktop, shown on narrow
+   viewports. Sits at the start of the header, before the page title. */
+.sidebar-toggle{
+  display:none;
+  background:none;
+  border:none;
+  border-radius:10px;
+  font-size:1.3rem;
+  cursor:pointer;
+  color:var(--maroon);
+  width:40px;
+  height:40px;
+  line-height:1;
+  flex-shrink:0;
+  margin-left:-6px;
+}
+.sidebar-toggle:hover{background:var(--warm);}
+
+/* Backdrop shown behind the sidebar on mobile once it's opened, so a
+   tap anywhere outside the drawer closes it. */
+.sidebar-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(31,16,12,.45);
+  z-index:99;
+}
+
+/* ── RESPONSIVE: tablet and phone ── */
+@media (max-width: 900px){
+  .sidebar-toggle{display:inline-flex;align-items:center;justify-content:center;}
+
+  /* Closed drawer is also visibility:hidden so its links can't be
+     tabbed to while off-screen. */
+  #sidebar{
+    transform:translateX(-100%);
+    visibility:hidden;
+    box-shadow:none;
+    transition:transform .25s ease, visibility 0s linear .25s;
+  }
+  body.sidebar-open #sidebar{
+    transform:translateX(0);
+    visibility:visible;
+    box-shadow:0 0 32px rgba(0,0,0,.3);
+    transition:transform .25s ease, visibility 0s;
+  }
+  body.sidebar-open{overflow:hidden;}
+  body.sidebar-open .sidebar-backdrop{display:block;}
+
+  #main{margin-left:0;}
+  header{padding:10px 16px;gap:8px;}
+  .header-title{font-size:1.1rem;}
+  #content{padding:20px 16px 32px;}
+
+  .form-grid{grid-template-columns:1fr;}
+  .report-grid-2{grid-template-columns:1fr;}
+
+  .toolbar select,
+  .toolbar input[type="date"],
+  .notif-history-toolbar select,
+  .notif-history-toolbar input[type="date"]{flex:1 1 160px;width:auto;min-width:0;}
+  .search-wrap{max-width:none;flex:1 1 100%;}
+
+  .modal-card{width:94vw;}
+
+  /* Page headers: let the action button drop below the title/description
+     instead of being squeezed against it. */
+  .page-header{flex-wrap:wrap;row-gap:12px;}
+}
+
+@media (max-width: 520px){
+  .header-right{gap:6px;}
+  .user-pill{padding:3px;}
+  .user-pill span{display:none;}
+  table{font-size:.8rem;}
+  th, td{padding:10px 12px;}
+  .card{padding:18px 16px;}
+
+  /* Page headers: stack title/description above the action button entirely
+     on narrow phones, where side-by-side no longer has room. */
+  .page-header{flex-direction:column;align-items:stretch;}
+  .page-header > .btn-primary,
+  .page-header > button{align-self:stretch;text-align:center;}
+  .page-header > div[style*="display:flex"]{flex-wrap:wrap;}
+  .page-header > div[style*="display:flex"] > button{flex:1 1 auto;}
+
+  .modal-footer{flex-wrap:wrap;}
+  .modal-footer > button{flex:1 1 auto;}
+
+  /* Medicine dispense rows (Clinic Visit modal): the 2fr/1fr/auto grid is
+     too tight on phone widths, so drop to two even columns with the
+     remove button on its own line underneath. */
+  .dispense-row{grid-template-columns:1fr 1fr;row-gap:6px;}
+  .dispense-row .remove-row-btn{grid-column:1 / -1;justify-self:end;}
+
+  /* Report progress bars: the label column is too wide relative to a
+     phone screen; shrink it so the bar itself stays visible. */
+  .rep-bar-row{grid-template-columns:88px 1fr 56px;gap:6px;}
+  .rep-bar-row.rep-bar-row-plain{grid-template-columns:1fr auto;}
+}
+
+/* ── USER DROPDOWN MENU ── */
+.user-menu-wrap{position:relative;}
+.user-menu-caret{font-size:.65rem;color:var(--muted);margin-left:2px;transition:transform .15s ease;}
+.user-menu-wrap.open .user-menu-caret{transform:rotate(180deg);}
+
+.user-dropdown{
+  display:none;
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:240px;
+  background:var(--white);
+  border-radius:12px;
+  box-shadow:0 10px 32px rgba(60,24,24,.18);
+  border:1px solid var(--line);
+  overflow:hidden;
+  z-index:200;
+  animation:dropFade .15s ease;
+}
+.user-menu-wrap.open .user-dropdown{display:block;}
+@keyframes dropFade{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+/* ── NOTIFICATION CENTER ── */
+.notif-bell-wrap{position:relative;}
+.notif-bell{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  background:none;
+  border:none;
+  font-size:1.2rem;
+  color:var(--maroon);
+  cursor:pointer;
+  border-radius:10px;
+  line-height:1;
+}
+.notif-bell:hover{background:var(--warm);}
+.notif-bell-badge{
+  position:absolute;
+  top:1px;
+  right:1px;
+  border:2px solid var(--white);
+  background:#b3261e;
+  color:#fff;
+  font-size:.62rem;
+  font-weight:700;
+  border-radius:10px;
+  min-width:18px;
+  height:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 4px;
+}
+.notif-panel{
+  display:none;
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:340px;
+  max-height:420px;
+  overflow-y:auto;
+  background:var(--white);
+  border-radius:12px;
+  box-shadow:0 10px 32px rgba(123,28,46,.18);
+  border:1px solid #f0e6da;
+  z-index:200;
+  animation:dropFade .15s ease;
+}
+.notif-bell-wrap.open .notif-panel{display:block;}
+.notif-panel-header{
+  padding:12px 16px;
+  font-weight:700;
+  font-size:.85rem;
+  border-bottom:1px solid #f0e6da;
+  color:var(--maroon);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.notif-mark-all{
+  background:none;
+  border:none;
+  color:var(--maroon);
+  font-size:.68rem;
+  font-weight:600;
+  cursor:pointer;
+  padding:2px 4px;
+  opacity:.8;
+}
+.notif-mark-all:hover{opacity:1;text-decoration:underline;}
+.notif-panel-body{padding:6px 0;}
+.notif-section-label{
+  padding:8px 16px 4px;
+  font-size:.74rem;
+  font-weight:700;
+  color:var(--muted);
+  background:var(--warm);
+}
+.notif-item{
+  display:flex;
+  gap:10px;
+  padding:10px 16px;
+  border-bottom:1px solid #f7f0e8;
+  cursor:pointer;
+  transition:background .12s ease;
+  animation:notifFadeIn .18s ease;
+}
+.notif-item:hover{background:#fbf6ef;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item.unread{background:#fdf8f0;}
+.notif-item.unread:hover{background:#fbf1e0;}
+.notif-item-icon{font-size:.95rem;line-height:1.3;flex-shrink:0;}
+.notif-item-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.notif-item-dot.critical{background:#b3261e;}
+.notif-item-dot.warning{background:#c98a1a;}
+.notif-item-dot.info{background:#2a5c8a;}
+.notif-item-body{flex:1;min-width:0;}
+.notif-item-title{font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+.notif-item-title .unread-marker{width:7px;height:7px;border-radius:50%;background:var(--maroon);flex-shrink:0;}
+.notif-item-detail{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.notif-item-time{font-size:.72rem;color:var(--muted);margin-top:3px;}
+.notif-panel-footer{
+  padding:10px 16px;
+  text-align:center;
+  border-top:1px solid #f0e6da;
+}
+.notif-panel-footer a{font-size:.75rem;font-weight:600;color:var(--maroon);text-decoration:none;}
+.notif-panel-footer a:hover{text-decoration:underline;}
+@keyframes notifFadeIn{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── NOTIFICATION HISTORY PAGE ── */
+.notif-history-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.notif-history-list .notif-item{padding:14px 16px;border-radius:10px;margin-bottom:8px;border:1px solid #f0e6da;border-bottom:1px solid #f0e6da;}
+.notif-history-list .notif-item.unread{border-left:4px solid var(--maroon);}
+
+.user-dropdown-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 16px;
+  background:var(--warm);
+}
+.user-dropdown-header .avatar{width:36px;height:36px;font-size:.9rem;flex-shrink:0;}
+.user-dropdown-name{font-size:.85rem;font-weight:700;color:var(--text);}
+.user-dropdown-role{font-size:.72rem;color:var(--muted);margin-top:1px;}
+
+.user-dropdown-divider{height:1px;background:#f0e6da;margin:0;}
+
+.user-dropdown-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  font-size:.83rem;
+  font-weight:500;
+  color:var(--text);
+  cursor:pointer;
+  text-decoration:none;
+  transition:background .15s ease;
+}
+.user-dropdown-item:hover{background:var(--warm);}
+.user-dropdown-item .icon{font-size:1rem;width:18px;text-align:center;flex-shrink:0;}
+.user-dropdown-item.danger{color:#c0392b;}
+.user-dropdown-item.danger:hover{background:#fdecea;}
+
+/* The bell sits mid-header on narrow screens, so a panel anchored to it
+   would run off-screen. Pin it to the viewport instead. (Placed after the
+   base .notif-panel rules above so it wins.) */
+@media (max-width: 900px){
+  .notif-panel{position:fixed;top:60px;left:12px;right:12px;width:auto;max-height:calc(100vh - 84px);}
+}
+
+/* ── CONTENT AREA ── */
+#content{padding:32px;flex:1;width:100%;max-width:1480px;margin-inline:auto;}
+.page{
+  display:none;
+  animation:fadeIn .2s ease;
+}
+.page.active{
+  display:block;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── DASHBOARD ── */
+/* Stat cards: icon chip on the left, value + label on the right. Colour
+   comes from a single --accent variable per variant, so number, chip and
+   tint always agree (maroon default, gold, green, blue, red). */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{
+  --accent:var(--maroon);
+  --accent-soft:rgba(123,28,46,.09);
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:"icon value" "icon label";
+  column-gap:16px;
+  align-items:center;
+  min-height:92px;
+  padding:18px 20px;
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.stat-card.gold{--accent:var(--gold-d);--accent-soft:rgba(200,144,42,.16);}
+.stat-card.green{--accent:var(--ok);--accent-soft:rgba(46,125,90,.12);}
+.stat-card.blue{--accent:var(--info);--accent-soft:rgba(42,92,138,.11);}
+.stat-card.red{--accent:var(--danger);--accent-soft:rgba(163,37,38,.10);}
+.stat-card .icon-bg{
+  grid-area:icon;
+  width:46px;height:46px;
+  border-radius:12px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;line-height:1;
+}
+.stat-card h3{grid-area:value;font-size:1.85rem;font-weight:700;line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat-card p{grid-area:label;font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.35;}
+.stat-card.clickable{cursor:pointer;}
+.stat-card.clickable:hover{border-color:var(--gold);box-shadow:var(--shadow);}
+.stat-card.clickable:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+/* 4-card metric row used by every role's dashboard. */
+.stats-grid-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+@media(max-width:1200px){.stats-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){.stats-grid-4{grid-template-columns:1fr;gap:12px;margin-bottom:22px;}}
+
+/* Main dashboard body: 60/40 two-column. minmax(0, …) keeps the columns
+   inside the container (a literal 60% + 40% + gap used to overflow it). */
+.dash-body-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px;align-items:start;}
+@media(max-width:1000px){.dash-body-grid{grid-template-columns:minmax(0,1fr);}}
+.dash-col-main .card, .dash-col-side .card{margin-bottom:0;}
+.dash-col-main, .dash-col-side{display:flex;flex-direction:column;gap:24px;}
+
+/* Guidance dashboard: the right column (Quick Actions + Upcoming Follow-ups)
+   matches the height of the left column (Recent Activity, shared module),
+   never the other way round. contain:size stops the right column's own
+   content from setting the row height; the Follow-ups card then fills
+   whatever is left under Quick Actions and scrolls inside if it needs to.
+   min-height is the safety floor so Quick Actions is never clipped. */
+@media(min-width:1001px){
+  .dash-body-grid.fit-cols{align-items:stretch;}
+  .dash-body-grid.fit-cols .dash-col-main > .card{flex:1;}
+  .dash-body-grid.fit-cols .dash-col-side{contain:size;min-height:420px;}
+  .dash-body-grid.fit-cols .dash-col-side > .card:last-child{
+    flex:1;min-height:0;display:flex;flex-direction:column;
+  }
+  .dash-body-grid.fit-cols #upcoming-followups-list{flex:1;min-height:0;max-height:none;}
+}
+
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;}
+.quick-action-btn{
+  display:flex;align-items:center;gap:10px;
+  width:100%;text-align:left;
+  padding:11px 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--white);
+  font-size:.86rem;font-weight:600;color:var(--text);line-height:1.3;
+  cursor:pointer;transition:background .15s ease, border-color .15s ease;
+}
+.quick-action-btn:hover{background:var(--cream);border-color:var(--gold);}
+.quick-action-btn .qa-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--warm);color:var(--maroon);font-size:1rem;}
+
+/* Upcoming Follow-ups rows (Guidance dashboard) */
+.pending-task-item{
+  display:flex;align-items:flex-start;gap:10px;
+  /* No negative margin: inside the scrollable list it pushed the row 8px
+     past the edge, which caused the horizontal scrollbar and clipped the
+     left side of the text. */
+  padding:12px 12px;margin:0;border-radius:8px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+  transition:background .12s ease;
+}
+.pending-task-item:last-child{border-bottom:none;}
+.pending-task-item:hover{background:var(--cream);}
+.pending-task-item .pt-icon{font-size:1.05rem;line-height:1.3;}
+.pending-task-item > div{min-width:0;flex:1;}
+.pending-task-item .pt-title{font-size:.92rem;font-weight:600;color:var(--maroon);overflow-wrap:anywhere;}
+.pending-task-item .pt-sub{font-size:.82rem;color:var(--muted);margin-top:3px;}
+.pending-task-item.clickable{cursor:pointer;}
+.pt-section-label{
+  padding:14px 12px 6px;
+  font-size:.78rem;
+  font-weight:700;
+  color:var(--gold-d);
+}
+.pt-section-label:first-child{padding-top:2px;}
+
+/* Upcoming Follow-ups list: same compact/scroll behaviour as .timeline —
+   sizes to content, caps at 420px and scrolls internally once there are
+   many rows. Scoped to this id only. */
+#upcoming-followups-list{
+  max-height:360px;
+  overflow-y:auto;
+  overflow-x:hidden;   /* never show a horizontal scrollbar */
+  padding-right:4px;
+}
+#upcoming-followups-list::-webkit-scrollbar{width:6px;height:0;}
+#upcoming-followups-list::-webkit-scrollbar-track{background:transparent;}
+#upcoming-followups-list::-webkit-scrollbar-thumb{background:var(--gold-l);border-radius:6px;}
+#upcoming-followups-list::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+#upcoming-followups-list{scrollbar-width:thin;scrollbar-color:var(--gold-l) transparent;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow-sm);margin-bottom:24px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+.card-title{font-size:1rem;font-weight:600;color:var(--maroon);}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 9px;border-radius:999px;background:var(--warm);color:var(--maroon);font-size:.78rem;font-weight:700;font-variant-numeric:tabular-nums;}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;font-weight:500;transition:background .15s ease;}
+/* .btn-primary is defined once, near the modal footer below, and used
+   everywhere (base .btn + this modifier, or standalone). */
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{background:var(--gold-l);}
+.btn-outline{background:transparent;border:1.5px solid var(--maroon);color:var(--maroon);}
+.btn-outline:hover{background:var(--maroon);color:#fff;}
+/* .btn-sm (inline row actions) lives with the table styles below. */
+.btn-danger{
+  padding:9px 20px;
+  border:none;
+  border-radius:8px;
+  background:#b3261e;
+  color:#fff;
+  font-size:.88rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .15s ease, opacity .15s ease;
+}
+.btn-danger:hover{background:#961f18;}
+.btn-danger:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* ══════════════════════════════════════════════════
+   TABLE
+   Wrap each <table>...</table> with <div class="table-wrap">.
+   The wrapper scrolls horizontally on narrow screens, so wide tables
+   never stretch the page.
+   ══════════════════════════════════════════════════ */
+.table-wrap{
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--line);
+  max-width:100%;
+  overflow:hidden;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.86rem;
+}
+
+thead{
+  background:var(--warm);
+}
+
+th{
+  background:var(--warm);
+  color:var(--maroon);
+  font-weight:600;
+  padding:12px 16px;
+  text-align:left;
+  font-size:.8rem;
+  border-bottom:2px solid var(--gold);
+  white-space:nowrap;
+}
+
+td{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  color:var(--text);
+  vertical-align:middle;
+  /* Long free-text values (descriptions, concerns, notes) wrap at word
+     boundaries; a single unbreakable string is only split if it truly
+     cannot fit. (word-break:break-word used to chop ordinary words such
+     as "September" and pill labels mid-word.) */
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+
+tbody tr{
+  transition:background .12s ease;
+}
+
+tbody tr:hover td{
+  background:#fdf5ea;
+}
+
+tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* Brief highlight for the exact row/card a Notification Center click
+   landed on (see highlightRecordRow in admin.js) — points the user at
+   the record without opening any Edit form. Fades out on its own.
+   Two forms: a background tint for table rows, and a glow ring for
+   non-table elements like dashboard widget cards. */
+tbody tr.notif-target-row td{
+  background:#fbeee2;
+  transition:background 1.8s ease;
+}
+.notif-target-row:not(tr){
+  animation: notif-glow 1.8s ease-out 1;
+  border-radius: var(--radius, 10px);
+}
+@keyframes notif-glow{
+  0%   { box-shadow: 0 0 0 4px rgba(201,138,26,.55); }
+  100% { box-shadow: 0 0 0 0 rgba(201,138,26,0); }
+}
+
+/* Empty state — rendered by emptyRow() in admin.js: a short headline
+   plus one line saying what to do next. */
+td.table-empty,
+.table-empty{
+  padding:52px 24px;
+  text-align:center;
+  color:var(--muted);
+  font-size:.86rem;
+}
+td.table-empty strong{
+  display:block;
+  margin-bottom:4px;
+  font-size:1rem;
+  font-weight:600;
+  color:var(--text);
+}
+tbody tr:hover td.table-empty{background:transparent;}
+.table-empty .icon{
+  font-size:2rem;
+  display:block;
+  margin-bottom:8px;
+  opacity:.4;
+}
+
+/* Keep the Actions column reachable when a wide table scrolls sideways.
+   Desktop/tablet only — on phones it would cover most of the screen. */
+@media (min-width:901px){
+.table-wrap table:has(tbody td:last-child > .btn-sm) th:last-child,
+.table-wrap td:last-child:has(> .btn-sm){
+  position:sticky;
+  right:0;
+}
+.table-wrap td:last-child:has(> .btn-sm){background:var(--white);}
+.table-wrap tbody tr:hover td:last-child:has(> .btn-sm){background:#fdf5ea;}
+}
+
+/* The Actions cell must stay a real table-cell. It used to be
+   display:flex, which pulls a <td> out of table layout: the cell no
+   longer stretches to the row height, so its bottom border sat a few
+   px higher than every other cell's and the row lines looked uneven.
+   font-size:0 removes the whitespace gaps between the inline buttons
+   (each .btn-sm sets its own rem font-size); spacing comes from the
+   margins below.
+   white-space:nowrap keeps every button of a row on ONE line. Without
+   it the column is sized to its widest single button, so a row with 3
+   actions (e.g. Edit + View + Archive) wrapped Archive onto a second
+   line while 2-action rows stayed on one. With nowrap the column is
+   sized to the row with the most buttons; on narrow screens the table
+   scrolls sideways inside .table-wrap instead of stacking buttons. */
+td.actions-cell{
+  display:table-cell;
+  vertical-align:middle;
+  font-size:0;
+  line-height:0;
+  white-space:nowrap;
+}
+td.actions-cell > .btn-sm{
+  vertical-align:middle;
+  margin:3px 8px 3px 0;
+}
+td.actions-cell > .btn-sm:last-child{
+  margin-right:0;
+}
+
+/* Row-action buttons (Edit / Send SMS / Archive / View …). Inline-flex
+   so icon + label sit on one baseline; gap on the parent .actions-cell
+   handles spacing, so wrapping (on narrow cells/screens) stays even in
+   both directions instead of the old margin-only stacking.
+   Per-button inline colours set in admin.js still win where present. */
+.btn-sm {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    min-height:30px;
+    min-width:60px;
+    margin:2px 4px 2px 0;
+    padding:0 12px;
+    background:#fff;
+    color:var(--text);
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    cursor:pointer;
+    font-size:.78rem;
+    font-weight:500;
+    line-height:1;
+    white-space:nowrap;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+.btn-sm:hover { background:var(--warm); }
+.btn-sm:active { background:var(--line); }
+
+/* Small icon that sits before the label — secondary to the text, never
+   the whole button (labels are kept for usability per design spec).
+   All row-action icons use the project's Flaticon UIcons font
+   (fi fi-rr-*), same family already used elsewhere in the system. */
+.btn-ico{
+    font-size:.85rem;
+    line-height:1;
+}
+
+/* Icon-only variant — Edit, Send SMS, View, Reopen, Profile.
+   (Archive keeps its text label, no icon.)
+   Square, compact button; icon is sized up since it's the only content. */
+.btn-sm.icon-only{
+    min-width:30px;
+    width:30px;
+    padding:0;
+    gap:0;
+}
+.btn-sm.icon-only .btn-ico{
+    font-size:1rem;
+}
+
+.btn-sm.danger {
+    border-color:#b3261e;
+    color:#b3261e;
+}
+.btn-sm.danger:hover { background:#fdecea; }
+
+/* Send SMS — system-accent variant, same shape/size as every other
+   row action so Edit | Send SMS | Archive line up as one flat set. */
+.btn-sm.sms {
+    border-color:var(--info);
+    color:var(--info);
+}
+.btn-sm.sms:hover { background:#eaf1f8; }
+
+/* Status pills. nowrap keeps labels like "For Monitoring" on one line. */
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;white-space:nowrap;line-height:1.4;}
+.pill-green{background:#e0f5ec;color:#1a6b4a;}
+.pill-red{background:#fdecea;color:#a32526;}
+.pill-yellow{background:#fef9e0;color:#7a5a00;}
+.pill-gray{background:#eceff1;color:#455a64;}
+.pill-blue{background:#e0eef8;color:#1a4a7a;}
+.pill-orange{background:#fdf0e2;color:#8a4a12;}
+
+/* ─── Modal Overlay ──────────────────────────────────── */
+/* JS opens a modal by setting style.display = 'flex'. */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 16, 12, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 24px 0;
+}
+
+/* ─── Modal Card ─────────────────────────────────────── */
+/* Header and footer stay fixed; only .modal-body scrolls, so a long form
+   never pushes the action buttons off-screen. */
+.modal-card {
+  background: #fff;
+  border-radius: 14px;
+  width: 520px;
+  max-width: 95vw;
+  max-height: 90vh;
+  box-shadow: 0 20px 50px rgba(31,16,12,0.28);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-card-wide {
+  width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-card-wide .modal-body {
+  max-height: none;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.modal-card-wide .form-group textarea {
+  min-height: 46px;
+}
+
+.dispense-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.dispense-row .stock-note {
+  grid-column: 1 / -1;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.info-note {
+  font-size: .8rem;
+  color: var(--muted);
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.dispense-row .remove-row-btn {
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
+  color: #b3261e;
+}
+
+
+/* ─── Modal Header ───────────────────────────────────── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--maroon);
+  margin: 0;
+}
+
+.modal-header button {
+  background: var(--warm);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modal-header button:hover {
+  background: #f6dcdf;
+  color: var(--maroon);
+}
+
+/* ─── Modal Body ─────────────────────────────────────── */
+.modal-body {
+  padding: 22px 24px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0; /* required for flex children to actually shrink/scroll instead of overflowing their parent */
+}
+
+/* ─── Form Grid ──────────────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-size: .9rem;
+  color: var(--text);
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder{
+  color:#9a8a7c;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--maroon);
+  box-shadow: 0 0 0 3px rgba(123,28,46,.12);
+}
+
+.form-group input[type="checkbox"]{
+  accent-color: var(--maroon);
+}
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236b5a4e' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-color: #fff;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ─── Checkbox row: checkbox beside its text ─────────── */
+.form-group.check-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+.form-group.check-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.form-group.check-row label {
+  margin: 0;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.check-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: .75rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ─── Modal Footer ───────────────────────────────────── */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--cream);
+  flex-shrink: 0;
+}
+
+.btn-light {
+  padding: 9px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font-size: .88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-light:hover {
+  background: var(--warm);
+}
+
+.btn-primary {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 8px;
+  background: var(--maroon);
+  color: #fff;
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background: var(--maroon-l);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;gap:10px;margin-bottom:18px;}
+.search-bar input{flex:1;border:1.5px solid #e0d8d0;border-radius:8px;padding:9px 14px;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none;}
+.search-bar input:focus{border-color:var(--maroon);}
+
+/* ── NOTIFICATIONS ── */
+.notif {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: .88rem;
+  font-weight: 600;
+  z-index: 99999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  display: none;
+  text-align: center;
+  min-width: 220px;
+  max-width: 480px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  letter-spacing: .3px;
+}
+.notif.show {
+  display: block;
+  animation: slideDown .3s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-16px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.notif.success { background: #2e7d5a; color: #fff; }
+.notif.update  { background: #2a5c8a; color: #fff; }
+.notif.delete  { background: #c0392b; color: #fff; }
+.notif.warn    { background: #f5b942; color: #2b1a00; }
+/* ── TIMELINE / ACTIVITY FEED ── */
+/* Scrolls instead of being hard-capped to a handful of items, so older
+   activity is still reachable. Markup comes from activityItemHtml() in
+   admin.js (.tl-dot + .tl-body > .tl-name / .tl-meta / .tl-time). */
+.timeline{
+  display:flex;flex-direction:column;
+  max-height:420px;
+  overflow-y:auto;
+  padding-right:6px; /* keeps content clear of the scrollbar */
+}
+.timeline::-webkit-scrollbar{width:6px;}
+.timeline::-webkit-scrollbar-track{background:transparent;}
+.timeline::-webkit-scrollbar-thumb{background:var(--gold-l);border-radius:6px;}
+.timeline::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+.timeline{scrollbar-width:thin;scrollbar-color:var(--gold-l) transparent;}
+.tl-item{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);}
+.tl-item:first-child{padding-top:2px;}
+.tl-item:last-child{border-bottom:none;padding-bottom:2px;}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--maroon);margin-top:6px;flex-shrink:0;}
+.tl-dot.gold{background:var(--gold);}
+.tl-dot.green{background:#2e7d5a;}
+.tl-dot.blue{background:#2a5c8a;}
+.tl-dot.yellow{background:#c98a1a;}
+.tl-dot.red{background:#a32526;}
+.tl-body{min-width:0;flex:1;}
+.tl-name{font-size:.9rem;font-weight:600;color:var(--text);overflow-wrap:break-word;}
+.tl-meta{font-size:.82rem;color:var(--muted);margin-top:2px;overflow-wrap:break-word;}
+.tl-meta .pill{margin-left:2px;}
+.tl-time{font-size:.76rem;color:var(--muted);margin-top:3px;}
+.tl-text{font-size:.82rem;}
+.tl-text strong{display:block;font-weight:600;}
+.tl-text span{color:var(--muted);font-size:.75rem;}
+/* Empty / loading / error line inside a card or list. */
+.tl-empty{padding:28px 12px;text-align:center;font-size:.86rem;color:var(--muted);}
+#upcoming-followups-list .tl-empty{padding:20px 12px;}
+
+/* ── INTEGRATED STUDENT PROFILE ── */
+.sp-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:.75rem 0;}
+.sp-info-label{display:block;font-size:.78rem;color:var(--muted);}
+.sp-info-value{display:block;font-size:.95rem;font-weight:600;margin-top:2px;}
+.sp-record-row{padding:.6rem 0;border-bottom:1px solid var(--border);}
+.sp-record-row:last-child{border-bottom:none;}
+.sp-record-main{font-weight:600;font-size:.88rem;}
+.sp-record-sub{font-size:.75rem;color:var(--muted);margin-top:2px;}
+/* Active/Pending Items: the card header ("⚠️ Active / Pending Items" +
+   count badge) stays put; only this inner list gets a fixed height and
+   scrolls, so a long alert list never grows the card (and in turn the
+   Student Profile modal) taller. ~300px comfortably shows ~5 rows of
+   the two-line item layout used below before scrolling kicks in. */
+.sp-alerts-list{
+  max-height:300px;
+  overflow-y:auto;
+  padding-right:4px; /* keeps the scrollbar clear of the item text */
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold-l) transparent;
+}
+.sp-alerts-list::-webkit-scrollbar{width:6px;}
+.sp-alerts-list::-webkit-scrollbar-track{background:transparent;}
+.sp-alerts-list::-webkit-scrollbar-thumb{background:var(--gold-l);border-radius:6px;}
+.sp-alerts-list::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+/* Same fixed-height/scroll treatment, reused for the other record lists
+   (Clinic Visits, Treatment History, Referrals, Behavioral Records,
+   Offenses, Counseling Sessions, Timeline) so a long list scrolls inside
+   its own card instead of growing the card. Deliberately NOT applied to
+   the Summary stat cards (.report-stats-grid) or the Student Information
+   grid (.sp-info-grid) — those stay exactly as they are. */
+.sp-scroll-list{
+  max-height:300px;
+  overflow-y:auto;
+  padding-right:4px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold-l) transparent;
+}
+.sp-scroll-list::-webkit-scrollbar{width:6px;}
+.sp-scroll-list::-webkit-scrollbar-track{background:transparent;}
+.sp-scroll-list::-webkit-scrollbar-thumb{background:var(--gold-l);border-radius:6px;}
+.sp-scroll-list::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+#studentProfileModal .modal-card{
+  max-width:min(760px, 95vw);
+  max-height:85vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden; /* the card itself no longer scrolls */
+}
+#studentProfileModal .modal-header{
+  flex-shrink:0; /* header stays pinned, never scrolls with content */
+}
+#studentProfileModal .modal-body{
+  flex:1 1 auto;
+  overflow-y:auto; /* only this area scrolls */
+  max-height:none;
+}
+#studentProfileModal .modal-footer{
+  flex-shrink:0; /* footer (Close button) stays pinned too */
+}
+/* Subtle scrollbar for the scrolling body, matching .timeline elsewhere
+   in the system (thin, gold thumb, invisible track) instead of the
+   browser's default bar. */
+#sp-body{scrollbar-width:thin;scrollbar-color:var(--gold-l) transparent;}
+#sp-body::-webkit-scrollbar{width:6px;}
+#sp-body::-webkit-scrollbar-track{background:transparent;}
+#sp-body::-webkit-scrollbar-thumb{background:var(--gold-l);border-radius:6px;}
+#sp-body::-webkit-scrollbar-thumb:hover{background:var(--gold);}
+#studentProfileModal .report-stats-grid{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
+#studentProfileModal .rep-value{font-size:1.5rem;}
+#studentProfileModal .card{margin-bottom:1rem;}
+#sp-meta{color:var(--muted);font-size:.85rem;margin-top:2px;}
+
+/* ── INVENTORY ── */
+.inv-bar{height:8px;border-radius:4px;background:#f0e8e0;overflow:hidden;margin-top:6px;}
+.inv-fill{height:100%;border-radius:4px;transition:width .6s;}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px;}
+.page-header h2{font-family:var(--font-display);font-size:1.7rem;font-weight:600;line-height:1.2;color:var(--maroon);}
+.page-header p{font-size:.88rem;color:var(--muted);margin-top:4px;max-width:68ch;}
+
+/* Toolbar — search + filters above every table. All controls share one
+   height, border and focus style. */
+.toolbar,
+.notif-history-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.toolbar input[type="text"],
+.toolbar input[type="date"],
+.toolbar select,
+.notif-history-toolbar input[type="text"],
+.notif-history-toolbar input[type="date"],
+.notif-history-toolbar select,
+.report-toolbar input[type="date"] {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background-color: #fff;
+  color: var(--text);
+  font-size: .88rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.toolbar input:focus,
+.toolbar select:focus,
+.notif-history-toolbar input:focus,
+.notif-history-toolbar select:focus,
+.report-toolbar input:focus {
+  border-color: var(--maroon);
+  box-shadow: 0 0 0 3px rgba(123,28,46,.12);
+}
+.toolbar select,
+.notif-history-toolbar select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 170px;
+  flex: 0 0 auto;
+  padding-right: 34px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236b5a4e' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.toolbar input[type="date"],
+.notif-history-toolbar input[type="date"] {
+  flex: 0 0 auto;
+  width: 170px;
+}
+
+/* Search wrap — sizes search bars consistently across all toolbars,
+   whether or not a dropdown sits next to them. The magnifier is a
+   background image, so no extra markup is needed. */
+.search-wrap {
+  flex: 1 1 280px;
+  max-width: 380px;
+  display: flex;
+}
+.search-wrap input[type="text"] {
+  flex: 1;
+  width: 100%;
+  max-width: none;
+  padding-left: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b5a4e' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+.toolbar input::placeholder,
+.notif-history-toolbar input::placeholder { color:#9a8a7c; }
+
+/* Blood type badges */
+.blood-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.b-o     { background: #E6F1FB; color: #0C447C; }
+.b-a     { background: #EAF3DE; color: #27500A; }
+.b-b     { background: #FAEEDA; color: #633806; }
+.b-ab    { background: #EEEDFE; color: #3C3489; }
+.b-o-neg, .b-a-neg, .b-b-neg, .b-ab-neg { background: #FCEBEB; color: #791F1F; }
+
+.blood-badge.b-unknown {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.btn-logout {
+    background: rgba(123,28,46,.06);
+    border: 1.5px solid rgba(123,28,46,.2);
+    color: var(--maroon);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+    margin-left: 5px;
+    font-weight: 600;
+    transition: background .15s ease;
+}
+.btn-logout:hover{
+    background: var(--maroon);
+    color: #fff;
+}/* ── READ-ONLY NOTICE (Treatment History / Referral History) ── */
+.readonly-notice{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#f7ede2;
+  border:1px solid #e8d3b8;
+  border-left:4px solid var(--gold);
+  border-radius:10px;
+  padding:12px 16px;
+  margin-bottom:18px;
+  font-size:.85rem;
+  line-height:1.5;
+  color:#6d5147;
+}
+.readonly-notice .icon{font-size:1.1rem;flex-shrink:0;}
+
+/* ── ALERT BANNER (low stock / expiring / expired) ── */
+.alert-banner{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:20px;
+}
+.alert-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 16px;
+  border-radius:10px;
+  font-size:.83rem;
+  line-height:1.5;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.alert-row:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+.alert-icon{font-size:1.1rem;flex-shrink:0;line-height:1.4;}
+.alert-row strong{font-weight:700;}
+.alert-red{background:#fdecea;color:#a32526;border-left:4px solid #c0392b;}
+.alert-blue{background:#e0eef8;color:#1a4a7a;border-left:4px solid #2a5c8a;}
+.alert-yellow{background:#fef9e0;color:#8a6a00;border-left:4px solid #c8902a;}
+
+/* ── REPORTS PAGE ── */
+.report-tab.active {
+  background: var(--maroon);
+  color: #fff;
+  border-color: var(--maroon);
+}
+
+.report-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.report-toolbar label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: #6b5d52;
+}
+
+.report-toolbar input[type="date"] {
+  padding: 7px 10px;
+  border: 1px solid #e2d5c8;
+  border-radius: 8px;
+  font-size: .85rem;
+}
+
+.report-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  border: 1px solid #f1e8de;
+  border-left: 3px solid #f1e8de;
+  display: flex;
+  flex-direction: column;
+  min-height: 96px;
+  transition: border-color .15s ease;
+}
+
+/* Active (non-zero) values get a subtle gold accent border to draw the
+   eye; zero values stay on the neutral border above — a zero means "no
+   data yet", not an error, so it should never look alarming. */
+.report-stat-card.has-value {
+  border-left-color: var(--gold);
+}
+
+.report-stat-card .rep-label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: .4rem;
+}
+
+.report-stat-card .rep-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3c2a1e;
+  line-height: 1.2;
+}
+
+/* Zero-value KPIs are visually quieted — muted color, no bold weight —
+   so an empty stat reads as "nothing here yet" rather than an error. */
+.report-stat-card .rep-value.is-zero {
+  color: #b5a696;
+  font-weight: 600;
+}
+
+/* Text-based KPI values (e.g. "Most Common Offense") need to wrap
+   gracefully instead of overflowing the card or forcing it taller than
+   its numeric-KPI neighbors. */
+.report-stat-card .rep-value.rep-value-text {
+  font-size: 1.15rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.report-stat-card .rep-sub {
+  font-size: .78rem;
+  color: #8a7a6c;
+  margin-top: auto;
+  padding-top: .35rem;
+}
+
+.report-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.rep-bar-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 90px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f6efe6;
+}
+
+.rep-bar-row:last-child {
+  border-bottom: none;
+}
+
+.rep-bar-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: #4a3a2c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rep-bar-track {
+  background: #ede0d0;
+  border-radius: 8px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.rep-bar-fill {
+  background: linear-gradient(90deg, #c98a3e, #e0a85f);
+  height: 100%;
+  min-width: 4px;
+  border-radius: 8px;
+}
+
+.rep-bar-count {
+  font-size: .76rem;
+  font-weight: 600;
+  color: #8a7a6c;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Compact two-column variant for rows that have no progress bar, just a
+   label and a value (Counselor Analytics, Most Active Cases). */
+.rep-bar-row.rep-bar-row-plain {
+  grid-template-columns: 1fr auto;
+}
+
+.rep-case-code {
+  color: #b0a293;
+  font-size: .75rem;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.rep-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  font-size: .86rem;
+  color: var(--muted);
+  padding: .6rem 0;
+  text-align: center;
+}
+
+.rep-stock-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: .85rem;
+  margin-bottom: 6px;
+}
+
+.rep-stock-row.rep-stock-low {
+  background: #fdf3e3;
+  color: #8a6d1f;
+}
+
+.rep-stock-row.rep-stock-out {
+  background: #fbe9e7;
+  color: #b3261e;
+}
+
+.rep-stock-name {
+  font-weight: 600;
+}
+
+/* ── MEDICINE ANALYTICS: monthly trend chart (plain CSS, no JS chart lib) ── */
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 140px;
+  padding: 10px 4px 0;
+}
+.chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.chart-bar {
+  width: 100%;
+  max-width: 36px;
+  background: linear-gradient(180deg, #e0a85f, #c98a3e);
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+}
+.chart-bar-value {
+  font-size: .7rem;
+  color: #8a7a6c;
+  margin-bottom: 2px;
+}
+.chart-bar-label {
+  font-size: .72rem;
+  color: #8a7a6c;
+  margin-top: 6px;
+}
+.rep-depletion-urgent .rep-bar-count {
+  color: #b3261e;
+  font-weight: 700;
+}
+
+.rep-stock-qty {
+  font-weight: 600;
+}
+
+/* ── STUDENT NOT FOUND / QUICK REGISTER (Counseling, Behavioral, etc.) ── */
+.student-not-found {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fdf3e3;
+  border: 1px solid #e8c98a;
+  border-radius: 8px;
+  font-size: .82rem;
+  color: #8a6d1f;
+}
+
+.student-not-found a {
+  color: #a4452e;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.student-not-found a:hover {
+  text-decoration: underline;
+}
+
+.quick-register-box {
+  margin-top: 12px;
+  padding: 14px;
+  background: #faf6f0;
+  border: 1px solid #e2d5c8;
+  border-radius: 10px;
+}
+
+.quick-register-title {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #3c2a1e;
+  margin-bottom: 10px;
+}
+
+.quick-register-note {
+  font-size: .76rem;
+  color: #8a7a6c;
+  margin: 8px 0 0;
+}
+
+.quick-register-note-danger {
+  color: #a32526;
+  font-weight: 700;
+  background: #fdecea;
+  border: 1px solid #f3c4c0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 8px !important;
+}
+
+.quick-register-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ── "FROM GUIDANCE" BADGE ── */
+/* Shown under a student's name in Student Health Records when that
+   record was quick-registered from the Counseling modal (source =
+   'Guidance'), so Clinic Staff understand why blood type/current
+   medication may still be blank — it's not a data-entry mistake. */
+.badge-guidance {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 2px 8px;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #5b4a9e;
+  background: #ece7fb;
+  border-radius: 999px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ARCHIVED RECORDS PAGE
+   ════════════════════════════════════════════════════════════ */
+
+.archive-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.archive-tab {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .18s;
+  letter-spacing: .2px;
+
+  /* Icon + text alignment */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.archive-tab i {
+  font-size: 15px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archive-tab:hover {
+  border-color: var(--maroon);
+  color: var(--maroon);
+  background: var(--cream);
+}
+
+.archive-tab.active {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  color: #fff;
+}
+
+#page-archived .page-header p {
+  font-size: .88rem;
+  color: var(--muted);
+  margin-top: 4px;
+  max-width: 68ch;
+  line-height: 1.6;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   COUNSELING MODAL — SEPARATED "ADD NEW STUDENT" BAR
+   ════════════════════════════════════════════════════════════ */
+
+.counseling-add-student-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f7f3ed;
+  border: 1.5px dashed #d4c5a9;
+  border-radius: 10px;
+  margin-top: 6px;
+  font-size: .82rem;
+  color: #8a7a6a;
+}
+
+.btn-add-student-toggle {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #2e7d5a;
+  background: #fff;
+  color: #2e7d5a;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .18s;
+  white-space: nowrap;
+}
+
+.btn-add-student-toggle:hover {
+  background: #2e7d5a;
+  color: #fff;
+}
+/* ── Form Validation (Required Fields / Client & Server Feedback) ── */
+.field-invalid {
+  border: 1.5px solid #c0392b !important;
+  background: #fdecea;
+}
+.field-invalid:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.25);
+}
+.field-error-msg {
+  display: block;
+  color: #c0392b;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+.req-asterisk {
+  color: #c0392b;
+  margin-left: 2px;
+}
+
+/* ── Reports: print-only header (hidden on screen, shown via @media print) ── */
+.report-print-header,.report-print-footer{display:none;}
+
+/* ── Reports & Printing: clean print output ──
+   Hides navigational/editing chrome (sidebar, topbar, filters, tabs,
+   buttons, form inputs) so window.print() only outputs the report title,
+   period, and data. Scoped to print only — screen layout is untouched. */
+
+/* A4 portrait for every print job from the main app (Reports). The popup
+   print windows (referral, SMS, documents) set the same size in their own
+   HTML via csfPrintWindow() in admin.js. */
+@page{size:A4 portrait;margin:14mm 12mm;}
+
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* Screen layout is a flex row with a 260px sidebar margin and 100vh
+     heights — undo all of that so content uses the full A4 width and
+     flows across pages normally instead of being squeezed or clipped. */
+  html, body{
+    display:block !important; width:auto !important; height:auto !important;
+    min-height:0 !important; overflow:visible !important; background:#fff !important;
+    font-size:11pt;
+  }
+  #main{margin:0 !important; display:block !important; min-height:0 !important; width:100% !important;}
+  #content{padding:0 !important; max-width:none !important; width:100% !important;}
+  .page{animation:none !important;}
+
+  /* Hide everything that is not report content */
+  #sidebar, header, .sidebar-backdrop, .notif, .notif-panel,
+  .modal-overlay, .csf-dialog-overlay{display:none !important;}
+  .report-toolbar, .report-tabs{display:none !important;}
+  #page-reports .page-header{display:none !important;}
+  button, input, select{display:none !important;}
+
+  /* Same look as the Referral Letter / Conference Notice documents */
+  .report-print-header{display:block !important; margin-bottom:16px; text-align:center; border-bottom:3px double #7a1f2b; padding-bottom:12px;}
+  .report-print-school{font-family:'DM Sans',sans-serif; font-size:20px; font-weight:700; color:#7a1f2b; letter-spacing:.5px;}
+  .report-print-system{font-size:12px; color:#555; margin-top:2px;}
+  .report-print-title{font-size:16px; font-weight:700; margin-top:12px; color:#1a1a1a; text-transform:uppercase; letter-spacing:1px;}
+  .report-print-period{font-size:12px; color:#333; margin-top:4px;}
+  .report-print-footer{display:block !important; margin-top:24px; break-inside:avoid; page-break-inside:avoid;}
+  .report-print-sig{width:45%; text-align:center; margin-top:36px;}
+  .report-print-sig-line{border-top:1px solid #333; padding-top:4px; font-size:12px;}
+  .report-print-generated{margin-top:28px; font-size:11px; color:#888; text-align:center; border-top:1px solid #ddd; padding-top:10px;}
+  .card, .report-stat-card{border:1px solid #ccc !important; border-radius:0 !important;}
+  .card-title{color:#7a1f2b;}
+  .rep-label{font-weight:700;}
+
+  /* Summary cards: 2 per row; detail cards: one full-width card per row so
+     bars/labels have room, and no card is ever split across two pages. */
+  .report-stats-grid{grid-template-columns:repeat(2, 1fr) !important; gap:10px !important; margin-bottom:12px !important;}
+  .report-grid-2{grid-template-columns:1fr !important; gap:10px !important; margin-bottom:0 !important;}
+  .stat-card, .report-stat-card, .card{
+    break-inside:avoid; page-break-inside:avoid;
+    box-shadow:none !important;
+  }
+  .card{margin-bottom:10px !important; padding:14px 16px !important;}
+  .report-stat-card{min-height:0 !important;}
+
+  table{width:100% !important; border-collapse:collapse;}
+  thead{display:table-header-group;}
+  tr{break-inside:avoid; page-break-inside:avoid;}
+}
+
+/* ── COUNSELING SESSION DETAILS (read-only modal) ──
+   Reuses .modal-overlay / .modal-card-wide / .modal-body scrolling. Only
+   the read-only content blocks below are new. */
+.csd-section{margin-bottom:20px;}
+.csd-section:last-child{margin-bottom:0;}
+.csd-heading{
+  font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--maroon);margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);
+}
+.csd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
+.csd-field{min-width:0;}
+.csd-field.full{grid-column:1 / -1;}
+.csd-label{font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:3px;}
+.csd-value{font-size:.9rem;color:var(--text);overflow-wrap:anywhere;word-break:break-word;}
+.csd-value small{display:block;font-size:.78rem;color:var(--muted);margin-top:2px;}
+.csd-text{
+  white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;
+  background:var(--cream);border:1px solid var(--line);border-radius:8px;
+  padding:10px 12px;font-size:.9rem;line-height:1.55;color:var(--text);
+}
+.csd-empty{color:var(--muted);font-style:italic;}
+.csd-loading{padding:28px 0;text-align:center;color:var(--muted);font-size:.9rem;}
+@media (max-width:600px){
+  .csd-grid{grid-template-columns:1fr;}
+}
+
+/* ─── Confirmation dialog (assets/js/dialogs.js) ───────────────
+   Replaces the browser's native confirm()/prompt() boxes. */
+.csf-dialog-overlay{
+  position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(31,16,12,.55);
+}
+.csf-dialog-overlay.open{display:flex;animation:csfFade .15s ease-out;}
+.csf-dialog{
+  width:420px;max-width:100%;background:#fff;border-radius:16px;padding:26px 26px 20px;
+  box-shadow:0 20px 50px rgba(31,16,12,.28);text-align:center;font-family:var(--font-ui);
+  animation:csfPop .18s ease-out;
+}
+.csf-dialog-icon{
+  width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:#fdf0e2;color:var(--gold-d);
+}
+.csf-dialog.csf-danger  .csf-dialog-icon{background:#fbe9e9;color:var(--danger);}
+.csf-dialog.csf-restore .csf-dialog-icon{background:#e3f4ec;color:var(--ok);}
+.csf-dialog.csf-info    .csf-dialog-icon,
+.csf-dialog.csf-reopen  .csf-dialog-icon{background:#f3e6e9;color:var(--maroon);}
+.csf-dialog-title{margin:0 0 6px;font-size:1.15rem;font-weight:700;color:var(--maroon);}
+.csf-dialog-msg{margin:0 0 18px;font-size:.9rem;line-height:1.5;color:var(--muted);}
+.csf-dialog-label{display:block;text-align:left;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+.csf-dialog-input{
+  width:100%;box-sizing:border-box;border:1.5px solid var(--line-strong);border-radius:8px;
+  padding:9px 12px;font:inherit;font-size:.88rem;resize:vertical;outline:none;color:var(--text);
+}
+.csf-dialog-input:focus{border-color:var(--maroon);}
+.csf-dialog-input.csf-invalid{border-color:var(--danger);}
+.csf-dialog-error{min-height:18px;margin:4px 0 8px;text-align:left;font-size:.78rem;color:var(--danger);}
+.csf-dialog-actions{display:flex;gap:10px;justify-content:center;}
+.csf-btn{
+  flex:1;padding:10px 16px;border-radius:8px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;
+  transition:background .15s, transform .1s;
+}
+.csf-btn:active{transform:scale(.98);}
+.csf-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.csf-btn-cancel{background:#fff;color:var(--text);border:1.5px solid var(--line-strong);}
+.csf-btn-cancel:hover{background:var(--warm);}
+.csf-btn-confirm{background:var(--maroon);color:#fff;border:1.5px solid var(--maroon);}
+.csf-btn-confirm:hover{background:var(--maroon-l);border-color:var(--maroon-l);}
+.csf-dialog.csf-danger  .csf-btn-confirm{background:var(--danger);border-color:var(--danger);}
+.csf-dialog.csf-danger  .csf-btn-confirm:hover{background:#8a1f20;border-color:#8a1f20;}
+.csf-dialog.csf-restore .csf-btn-confirm{background:var(--ok);border-color:var(--ok);}
+.csf-dialog.csf-restore .csf-btn-confirm:hover{background:#1c5a3e;border-color:#1c5a3e;}
+@keyframes csfFade{from{opacity:0}to{opacity:1}}
+@keyframes csfPop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@media (max-width:480px){
+  .csf-dialog{padding:22px 18px 16px;}
+  .csf-dialog-actions{flex-direction:column-reverse;}
+}
+
+/* ─── About Us page ─────────────────────────────────────────── */
+.about-hero{display:flex;gap:28px;align-items:flex-start;}
+.about-logo{width:150px;height:150px;flex:0 0 150px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow);}
+.about-heading{font-size:1.15rem;font-weight:600;color:var(--maroon);margin-bottom:10px;}
+.about-body p{font-size:.92rem;line-height:1.7;color:var(--text);margin-bottom:12px;max-width:80ch;}
+.about-body p:last-child{margin-bottom:0;}
+.about-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;}
+.about-member{background:var(--cream);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:14px 16px;}
+.about-role{font-size:.76rem;font-weight:600;letter-spacing:.02em;color:var(--gold-d);margin-bottom:6px;}
+.about-name{font-size:.95rem;font-weight:600;color:var(--text);line-height:1.5;}
+@media (max-width:700px){
+  .about-hero{flex-direction:column;align-items:center;text-align:left;}
+  .about-logo{width:110px;height:110px;flex-basis:110px;}
+}
